@@ -1,0 +1,189 @@
+basePath: /
+definitions:
+  api.ErrResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  api.PostResponse:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  api.createPostRequest:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    required:
+    - content
+    - title
+    type: object
+  api.updatePostRequestBody:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Golang microservice for CURD operations with news
+  title: Promova Test Task
+  version: 0.0.1
+paths:
+  /posts:
+    get:
+      description: Get all posts
+      operationId: get-posts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.PostResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+      summary: Get posts
+      tags:
+      - Post
+    post:
+      consumes:
+      - application/json
+      description: Create a post
+      operationId: create-post
+      parameters:
+      - description: post entity related data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.createPostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+      summary: Create a post
+      tags:
+      - Post
+  /posts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific post by the specified id
+      operationId: delete-post-by-id
+      parameters:
+      - description: the specific post id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+      summary: Delete post by id
+      tags:
+      - Post
+    get:
+      consumes:
+      - application/json
+      description: Get a specific post by the specified id
+      operationId: get-post-by-id
+      parameters:
+      - description: the specific post id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+      summary: Get post by id
+      tags:
+      - Post
+    put:
+      consumes:
+      - application/json
+      description: Update a specific post by the specified id
+      operationId: update-post-by-id
+      parameters:
+      - description: the specific post id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: post entity related data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.updatePostRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+      summary: Update post by id
+      tags:
+      - Post
+swagger: "2.0"
