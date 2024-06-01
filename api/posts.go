@@ -220,7 +220,7 @@ func (s *Server) deletePost(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	context.Writer.WriteHeader(http.StatusOK)
+	context.Status(http.StatusOK)
 }
 
 func mapToPostsResponse(posts []db.Post) []PostResponse {
