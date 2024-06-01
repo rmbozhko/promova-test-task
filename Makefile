@@ -15,3 +15,8 @@ swag:
 
 server:
 	go run cmd/main.go
+
+deploy:
+	docker compose up -d
+
+.PHONY: migratecreate migrateup migratedown sqlc swag server deploy
