@@ -3,10 +3,12 @@ package api
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/lib/pq"
 	"net/http"
+	"os"
 	db "promova-test-task/db/sqlc"
+	"promova-test-task/util"
 )
 
 type createPostRequest struct {
@@ -49,7 +51,22 @@ func (s *Server) createPost(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	// TODO: Validate incoming data
+
+	_, ok := os.LookupEnv(util.OpenAIToken)
+	if !ok {
+		fmt.Println("No OPENAI API TOKEN environment variable is set")
+	} else {
+		if dataIsSafe, err := util.InputDataIsSafe(fmt.Sprintf("%s\n%s", request.Title, request.Content)); err == nil {
+			if !dataIsSafe {
+				context.JSON(http.StatusInternalServerError, errorResponse(fmt.Errorf("input data contains language which is against service policy")))
+				return
+			}
+		} else {
+			context.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+	}
+
 	post, err := s.store.CreatePost(context, db.CreatePostParams{
 		Title:   request.Title,
 		Content: request.Content,
@@ -147,6 +164,21 @@ func (s *Server) updatePost(context *gin.Context) {
 		return
 	}
 
+	_, ok := os.LookupEnv(util.OpenAIToken)
+	if !ok {
+		fmt.Println("No OPENAI API TOKEN environment variable is set")
+	} else {
+		if dataIsSafe, err := util.InputDataIsSafe(fmt.Sprintf("%s\n%s", requestBody.Title, requestBody.Content)); err == nil {
+			if !dataIsSafe {
+				context.JSON(http.StatusInternalServerError, errorResponse(fmt.Errorf("input data contains language which is against service policy")))
+				return
+			}
+		} else {
+			context.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+	}
+
 	post, err := s.store.GetPostById(context, int32(request.ID))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -170,14 +202,6 @@ func (s *Server) updatePost(context *gin.Context) {
 
 	post, err = s.store.UpdatePostById(context, arg)
 	if err != nil {
-		var pqError *pq.Error
-		if errors.As(err, &pqError) {
-			switch pqError.Code.Name() {
-			case "modifying_sql_data_not_permitted":
-				context.JSON(http.StatusBadRequest, errorResponse(err))
-				return
-			}
-		}
 		context.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}

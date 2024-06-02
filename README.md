@@ -2,6 +2,9 @@
 
 Startup instructions:
 
+### Data validation using OpenAI
+In order to validate the creation and update of posts against [OpenAI moderations endpoint](https://platform.openai.com/docs/api-reference/moderations/create?lang=curl) the `OPENAI_API_KEY` environment variable should be set.
+
 ### Project assembly
 To build and run REST microservice, run `make server`. Pay attention that the instance of PostgreSQL database running on port 5432 with database called `promova_test_task` should be created.
 
