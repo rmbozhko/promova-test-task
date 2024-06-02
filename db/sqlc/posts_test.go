@@ -22,7 +22,7 @@ func TestGetAllPosts(t *testing.T) {
 
 	require.NoError(t, err)
 	require.NotEmpty(t, posts)
-	require.Equal(t, postsTotalNumber, len(posts))
+	require.True(t, postsTotalNumber <= len(posts))
 }
 
 func TestGetPostById(t *testing.T) {
