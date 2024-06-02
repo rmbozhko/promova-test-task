@@ -29,7 +29,7 @@ func TestCreatePosts(t *testing.T) {
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name: "CreatePost_Success",
+			name: "positive_CreatePost",
 			body: gin.H{
 				"title":   randomPost.Title,
 				"content": randomPost.Content,
@@ -50,7 +50,7 @@ func TestCreatePosts(t *testing.T) {
 			},
 		},
 		{
-			name: "CreatePost_ErrorEmptyBody",
+			name: "negative_CreatePost_EmptyRequestBody",
 			body: gin.H{},
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
@@ -63,7 +63,7 @@ func TestCreatePosts(t *testing.T) {
 			},
 		},
 		{
-			name: "CreatePost_InternalError",
+			name: "negative_CreatePost_InternalError",
 			body: gin.H{
 				"title":   randomPost.Title,
 				"content": randomPost.Content,
@@ -119,7 +119,7 @@ func TestGetPostById(t *testing.T) {
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name: "OK",
+			name: "positive_GetPostById",
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				arg := randomPost.ID
 
@@ -134,7 +134,7 @@ func TestGetPostById(t *testing.T) {
 			},
 		},
 		{
-			name: "Error_NotFoundToken",
+			name: "negative_GetPostById_PostNotFound",
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				arg := randomPost.ID
 
@@ -149,7 +149,7 @@ func TestGetPostById(t *testing.T) {
 			},
 		},
 		{
-			name: "Error_InternalError",
+			name: "negative_GetPostById_InternalError",
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				arg := randomPost.ID
 
@@ -195,7 +195,7 @@ func TestGetPosts(t *testing.T) {
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name: "OK",
+			name: "positive_GetPosts",
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
 					GetPosts(gomock.Any()).
@@ -208,7 +208,7 @@ func TestGetPosts(t *testing.T) {
 			},
 		},
 		{
-			name: "Error_NotFoundToken",
+			name: "negative_GetPosts_PostsNotFound",
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
 					GetPosts(gomock.Any()).
@@ -221,7 +221,7 @@ func TestGetPosts(t *testing.T) {
 			},
 		},
 		{
-			name: "Error_InternalError",
+			name: "negative_GetPosts_InternalError",
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
 					GetPosts(gomock.Any()).
@@ -255,17 +255,10 @@ func TestGetPosts(t *testing.T) {
 	}
 }
 
-func TestUpdatePostsById(t *testing.T) {
+func TestUpdatePostById(t *testing.T) {
 	randomPost := generateRandomPost()
 	postResponse := mapToPostResponse(randomPost)
 
-	// + TODO: update both title and content
-	// + TODO: update title
-	// + TODO: update content
-	// + TODO: request when no title and content
-	// + TODO: not found
-	// TODO: internal error when looking for post
-	// TODO: internal error when updating
 	testCases := []struct {
 		name          string
 		body          gin.H
@@ -273,7 +266,7 @@ func TestUpdatePostsById(t *testing.T) {
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name: "UpdatePost_Success",
+			name: "positive_UpdatePost",
 			body: gin.H{
 				"title":   randomPost.Title,
 				"content": randomPost.Content,
@@ -315,7 +308,7 @@ func TestUpdatePostsById(t *testing.T) {
 			},
 		},
 		{
-			name: "UpdatePost_UpdateOnlyTitleSuccess",
+			name: "positive_UpdatePost_UpdateOnlyTitle",
 			body: gin.H{
 				"title": randomPost.Title,
 			},
@@ -354,7 +347,7 @@ func TestUpdatePostsById(t *testing.T) {
 			},
 		},
 		{
-			name: "UpdatePost_UpdateOnlyContentSuccess",
+			name: "positive_UpdatePost_UpdateOnlyContent",
 			body: gin.H{
 				"content": randomPost.Content,
 			},
@@ -393,7 +386,7 @@ func TestUpdatePostsById(t *testing.T) {
 			},
 		},
 		{
-			name: "UpdatePost_UpdateOnlyUpdateAtAttributeSuccess",
+			name: "positive_UpdatePost_UpdateOnlyUpdatedAtAttribute",
 			body: gin.H{},
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				arg := randomPost.ID
@@ -428,7 +421,7 @@ func TestUpdatePostsById(t *testing.T) {
 			},
 		},
 		{
-			name: "UpdatePost_PostNotFoundError",
+			name: "negative_UpdatePost_PostNotFound",
 			body: gin.H{
 				"title":   randomPost.Title,
 				"content": randomPost.Content,
@@ -451,7 +444,7 @@ func TestUpdatePostsById(t *testing.T) {
 			},
 		},
 		{
-			name: "Error_FetchPostByIdInternalError",
+			name: "negative_UpdatePostById_FetchPostByIdInternalError",
 			body: gin.H{
 				"title":   randomPost.Title,
 				"content": randomPost.Content,
@@ -473,7 +466,7 @@ func TestUpdatePostsById(t *testing.T) {
 			},
 		},
 		{
-			name: "Error_UpdatePostByIdInternalError",
+			name: "negative_UpdatePostById_UpdatePostByIdInternalError",
 			body: gin.H{
 				"title":   randomPost.Title,
 				"content": randomPost.Content,
@@ -532,7 +525,7 @@ func TestDeletePostById(t *testing.T) {
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name: "OK",
+			name: "positive_DeletePost",
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				arg := randomPost.ID
 
@@ -551,7 +544,7 @@ func TestDeletePostById(t *testing.T) {
 			},
 		},
 		{
-			name: "Error_NotFoundToken",
+			name: "negative_DeletePost_PostNotFound",
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				arg := randomPost.ID
 
@@ -570,7 +563,7 @@ func TestDeletePostById(t *testing.T) {
 			},
 		},
 		{
-			name: "Error_InternalError",
+			name: "negative_DeletePost_InternalError",
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				arg := randomPost.ID
 
